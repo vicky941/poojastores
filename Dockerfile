@@ -1,11 +1,17 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+# Use an image that includes the .NET SDK
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /app
+
+# Copy the project file and restore dependencies
 COPY *.csproj ./
 RUN dotnet restore
+
+# Copy the rest of the application code
 COPY . ./
 RUN dotnet publish -c Release -o out
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
+# Use a runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 COPY --from=build /app/out .
-ENTRYPOINT ["dotnet","PoojaStores.dll"]
+ENTRYPOINT ["dotnet", "YourApp.dll"]
