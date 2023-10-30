@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /app
-COPY poojastores.csproj /app/
+COPY src/poojastores.csproj /app/
 RUN dotnet restore
 COPY . .
 RUN dotnet publish -c Release -o out
