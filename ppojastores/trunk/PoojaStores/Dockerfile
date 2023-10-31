@@ -1,25 +1,16 @@
-# Use the official .NET SDK as a build image
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-
-WORKDIR /app
-
-# Copy the .csproj and restore any dependencies (if necessary)
-COPY . /app/
-RUN dotnet restore
-
-# Copy the remaining source code
-COPY . .
-
-# Build the application
-RUN dotnet publish -c Release -o out
-
-# Use the official .NET runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
-
-WORKDIR /app
-
-# Copy the built application from the build image
-COPY --from=build /app/out .
-
-# Specify the entry point for the container
-ENTRYPOINT ["dotnet", "YourAppName.dll"]
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+ WORKDIR /app
+ EXPOSE 80
+ FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+ WORKDIR /src
+ COPY . /app/
+ RUN dotnet restore 
+ COPY . .
+ WORKDIR "/src/."
+ RUN dotnet build -c Release -o /app/build
+ FROM build AS publish
+ RUN dotnet publish -c Release -o /app/publish
+ FROM base AS final
+ WORKDIR /app
+ COPY --from=publish /app/publish .
+ ENTRYPOINT ["dotnet", "PoojaStores.dll"]
