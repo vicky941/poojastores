@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /app
 
 # Copy the .csproj and restore any dependencies (if necessary)
-COPY PoojaStores.csproj /app/
+COPY . /app/
 RUN dotnet restore
 
 # Copy the remaining source code
